@@ -128,7 +128,6 @@ extension ConnectVC: CBCentralManagerDelegate {
 
 extension ConnectVC: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-//        print(peripheral.services.debugDescription)
         guard let services = peripheral.services else { return }
         for service in services {
             peripheral.discoverCharacteristics(nil, for: service)
@@ -141,24 +140,8 @@ extension ConnectVC: CBPeripheralDelegate {
             peripheral.setNotifyValue(true, for: charct)
             peripheral.readValue(for: charct)
             peripheral.readRSSI()
-            if charct.uuid == CBUUID(string: "F000C0E3-0451-4000-B000-000000000000"){
-               //peripheral.discoverDescriptors(for: charct)
-            let payload: [UInt8] = [UInt8]("0-1111111111".utf8)
-//                var data = [UInt8(0x7E), UInt8(0x12), UInt8(0x0C)]
-//            for value in payload {
-//                data.append(value)
-//            }
-//            data.append(UInt8(0x12 + 0x0C + 0x0A))
-//            data.append(UInt8(0x7E))
-            peripheral.writeValue(Data(bytes: [UInt8(0x7E),UInt8(0x12),UInt8(0x0C),payload,UInt8(0x12 + 0x0C + 0x0A),UInt8(0x7E)], count: 1), for: charct, type: CBCharacteristicWriteType.withResponse)
-//            peripheral.writeValue(Data(bytes: [], count: 1), for: charct, type: CBCharacteristicWriteType.withResponse)
-//            peripheral.writeValue(Data(bytes: [], count: 1), for: charct, type: CBCharacteristicWriteType.withResponse)
-//            peripheral.writeValue(Data(bytes: [], count: payload.count), for: charct, type: CBCharacteristicWriteType.withResponse)
-//            peripheral.writeValue(Data(bytes: [], count: 1), for: charct, type: CBCharacteristicWriteType.withResponse)
-//            peripheral.writeValue(Data(bytes: [], count: 1), for: charct, type: CBCharacteristicWriteType.withResponse)
-                
-//               peripheral.writeValue("0x5A".data(using: String.Encoding.utf16)!, for: charct, type: CBCharacteristicWriteType.withResponse)
-            }
+            // peripheral.discoverDescriptors(for: charct)
+
         }
     }
     
@@ -192,17 +175,15 @@ extension ConnectVC: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error{
-//            print(error.localizedDescription)
         } else {
             guard let value = characteristic.value else { return }
             let str = String(bytes: value, encoding: String.Encoding.utf8)
-            print(str)
 //            print("Notification: UUID: \(characteristic.uuid)\nValue: \(str)\n")
         }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-//        print(RSSI)
+
     }
 
     func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
@@ -236,14 +217,19 @@ extension ConnectVC: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         print(error ?? "")
-        print(characteristic.value)
+        print(characteristic.value!)
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {
-//        guard let descriptor = characteristic.descriptors else { return }
-//        peripheral.setNotifyValue(true, for: characteristic)
-//        peripheral.writeValue("vjhvjjv".data(using: String.Encoding.ascii)!, for: descriptor[0])
-        
+//       guard let descriptor = characteristic.descriptors else { return }
+//        print(descriptor)
+//        for desc in descriptor{
+//            if desc.uuid.uuidString != "2902" {
+//                peripheral.setNotifyValue(true, for: characteristic)
+//                let payload: [UInt8] = [UInt8]("0-1111111111".utf8)
+//                peripheral.writeValue(Data(bytes: [UInt8(0x7E),UInt8(0x12),UInt8(0x04),payload,UInt8(0x12 + 0x0C + 0x0A),UInt8(0x7E)], count: 5+payload.count), for: desc)
+//            }
+//        }
     }
     
     func peripheralDidUpdateRSSI(_ peripheral: CBPeripheral, error: Error?) {
@@ -254,7 +240,11 @@ extension ConnectVC: CBPeripheralDelegate {
 extension ConnectVC: ConnectCellDelegate {
     func didClick(button: UIButton) {
         let row = button.tag
-        BLEManager.shared.centralManager?.connect(BLEManager.shared.peripherals[row], options: nil)
+        if BLEManager.shared.peripherals[row].state == CBPeripheralState.disconnected {
+            BLEManager.shared.centralManager?.connect(BLEManager.shared.peripherals[row], options: nil)
+        } else if BLEManager.shared.peripherals[row].state == CBPeripheralState.connected {
+            BLEManager.shared.centralManager?.cancelPeripheralConnection(BLEManager.shared.peripherals[row])
+        }
         
     }
 }

@@ -18,7 +18,6 @@ class ConnectCell: UITableViewCell {
     @IBOutlet weak var lblDesc: UILabel!
     @IBOutlet weak var connectButton: UIButton!
     var delegate: ConnectCellDelegate?
-    
     @IBAction func actionConnect(_ sender: UIButton) {
         delegate?.didClick(button: sender)
     }
