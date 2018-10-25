@@ -9,12 +9,18 @@
 import UIKit
 import CoreBluetooth
 
+protocol getDataDelegate {
+    func getCharacteristics(bluetoothName: String, uuid: String, value: String)
+}
+
 class ConnectVC: UIViewController {
 
     @IBOutlet weak var activity: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
     
-    let connectCell = "ConnectCell"
+    var delegate: getDataDelegate?
+    var data: [String:[String:String]] = [String:[String:String]]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.estimatedRowHeight = 100
@@ -26,20 +32,46 @@ class ConnectVC: UIViewController {
         }
         BLEManager.shared.centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "SmartBluetooth"])
         
-        let nib = UINib(nibName: connectCell, bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: connectCell)
+        let nib = UINib(nibName: AppConsts.CellId.connectCell, bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: AppConsts.CellId.connectCell)
     }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destination = segue.destination as? DetailsVC
+        destination?.connectVC = self
+        if let row = tableView.indexPathForSelectedRow?.row, let key = BLEManager.shared.peripherals[row].name {
+            destination?.peripheral = key
+            if data.keys.contains(key){
+                if let uuids = data[key]?.keys, let values = data[key]?.values{
+                    destination?.uuidArray = Array(uuids)
+                    destination?.valueArray = Array(values)
+                }
+            }
+        }
+    }
+    
+    // MARK: - For adding data to dictionary
+    func manageData(peripheralName: String, uuid: String, value: String) {
+        if !value.isEmpty{
+            if data[peripheralName]?.keys.contains(uuid) ?? false{
+                data[peripheralName]?.updateValue(value, forKey: uuid)
+            } else {
+                data[peripheralName]?[uuid] = value
+            }
+        }
+    }
+    
 }
 
 
 extension ConnectVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return BLEManager.shared.peripherals.count
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ConnectCell = (tableView.dequeueReusableCell(withIdentifier: "ConnectCell", for: indexPath) as? ConnectCell)!
+        let cell: ConnectCell = (tableView.dequeueReusableCell(withIdentifier: AppConsts.CellId.connectCell, for: indexPath) as? ConnectCell)!
         cell.connectButton.tag = indexPath.row
         cell.delegate = self
         cell.lblTitle.text = BLEManager.shared.peripherals[indexPath.row].name ?? BLEManager.shared.peripherals[indexPath.row].identifier.uuidString
@@ -67,7 +99,8 @@ extension ConnectVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        BLEManager.shared.centralManager?.connect(BLEManager.shared.peripherals[indexPath.row], options: nil)
+       //BLEManager.shared.centralManager?.connect(BLEManager.shared.peripherals[indexPath.row], options: nil)
+        performSegue(withIdentifier: AppConsts.SegueId.toDetailsVC, sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -86,6 +119,8 @@ extension ConnectVC: CBCentralManagerDelegate {
             print("unauthorized")
         case .poweredOff:
             print("poweredOff")
+            BLEManager.shared.peripherals = []
+            tableView.reloadData()
         case .poweredOn:
             print("poweredOn")
             BLEManager.shared.centralManager?.scanForPeripherals(withServices: nil, options: nil)
@@ -140,44 +175,57 @@ extension ConnectVC: CBPeripheralDelegate {
             peripheral.setNotifyValue(true, for: charct)
             peripheral.readValue(for: charct)
             peripheral.readRSSI()
-            // peripheral.discoverDescriptors(for: charct)
-
+            //peripheral.discoverDescriptors(for: charct)
+            //peripheral.writeValue("Heart Rate".data(using: String.Encoding.utf8)!, for: charct, type: CBCharacteristicWriteType.withResponse)
         }
     }
     
     //MARK:- Main delegate
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard let value = characteristic.value else { return }
-        
-        if characteristic.uuid.uuidString == "2A19" {
-            print("Battery Level: \(value.first ?? 0)")
-        } else if characteristic.uuid.uuidString == "2A2B" {
-            guard value.count > 6 else { return }
-            let month = value[2]
-            let day = value[3]
-            let hour = value[4]
-            let min = value[5]
-            print("Month: \(month) Day: \(day) Hour: \(hour) Min: \(min)")
-        } else if characteristic.uuid.uuidString == "2A29" {
-            print("Manufacturer: \(String(describing: String(bytes: value, encoding: String.Encoding.utf8)))")
-        } else {
-            print("Details: \(String(describing: String(bytes: value, encoding: String.Encoding.utf8)))")
-            for byte in value {
-                print("characteristic UUID:\(characteristic.uuid.uuidString) value: \(byte)")
+        if let peripheralName = peripheral.name {
+            if !data.keys.contains(peripheralName){
+                data[peripheralName] = [:]
+            }
+            
+            if characteristic.uuid.uuidString == "2A19" {
+                delegate?.getCharacteristics(bluetoothName: peripheralName, uuid: "2A19", value: "\(value.first ?? 0)")
+                manageData(peripheralName: peripheralName, uuid: characteristic.uuid.uuidString, value: "\(value.first ?? 0)")
+                print("Battery Level: \(value.first ?? 0)")
+            } else if characteristic.uuid.uuidString == "2A2B" {
+                guard value.count > 6 else { return }
+                let month = value[2]
+                let day = value[3]
+                let hour = value[4]
+                let min = value[5]
+                print("Month: \(month) Day: \(day) Hour: \(hour) Min: \(min)")
+                delegate?.getCharacteristics(bluetoothName: peripheralName, uuid: "2A2B", value: "Month: \(month) Day: \(day) Hour: \(hour) Min: \(min)")
+                manageData(peripheralName: peripheralName, uuid: characteristic.uuid.uuidString, value: "Month: \(month) Day: \(day) Hour: \(hour) Min: \(min)")
+            } else if characteristic.uuid.uuidString == "2A29" {
+                print("Manufacturer: \(String(describing: String(bytes: value, encoding: String.Encoding.utf8)))")
+                delegate?.getCharacteristics(bluetoothName: peripheralName, uuid: "2A29", value: String(bytes: value, encoding: String.Encoding.utf8) ?? "")
+                manageData(peripheralName: peripheralName, uuid: characteristic.uuid.uuidString, value: String(describing: String(bytes: value, encoding: String.Encoding.utf8)))
+            } else if characteristic.uuid.uuidString == "2A37"{
+                print("Heart Rate: \(value[1])")
+                delegate?.getCharacteristics(bluetoothName: peripheralName, uuid: characteristic.uuid.uuidString, value: "\(value[1])")
+                manageData(peripheralName: peripheralName, uuid: characteristic.uuid.uuidString, value: "\(value[1])")
+            } else {
+                print("Details: \(String(describing: String(bytes: value, encoding: String.Encoding.utf8)))")
+                delegate?.getCharacteristics(bluetoothName: peripheralName, uuid: characteristic.uuid.uuidString, value: String(bytes: value, encoding: String.Encoding.utf8) ?? "")
+                manageData(peripheralName: peripheralName, uuid: characteristic.uuid.uuidString, value: String(bytes: value, encoding: String.Encoding.utf8) ?? "")
+                for byte in value {
+                    print("characteristic UUID:\(characteristic.uuid.uuidString) value: \(byte)")
+                }
             }
         }
         
-        
-//        let str = String(bytes: value, encoding: String.Encoding.utf8)
-//
-//        print("Data: UUID: \(characteristic.uuid)\nValue: \(str)\n")
     }
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        if let error = error{
+        if error != nil{
         } else {
             guard let value = characteristic.value else { return }
-            let str = String(bytes: value, encoding: String.Encoding.utf8)
+            _ = String(bytes: value, encoding: String.Encoding.utf8)
 //            print("Notification: UUID: \(characteristic.uuid)\nValue: \(str)\n")
         }
     }
@@ -217,7 +265,7 @@ extension ConnectVC: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         print(error ?? "")
-        print(characteristic.value!)
+        print(characteristic.value ?? "characteristic nil")
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverDescriptorsFor characteristic: CBCharacteristic, error: Error?) {

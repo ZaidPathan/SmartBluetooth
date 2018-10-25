@@ -48,11 +48,12 @@
                     <connections>
                         <outlet property="activity" destination="XXF-TR-jRW" id="C3u-qM-82Y"/>
                         <outlet property="tableView" destination="qah-dA-NaY" id="WyM-01-eNQ"/>
+                        <segue destination="Re7-AT-eHU" kind="show" identifier="toDetailsVC" id="YDJ-S4-4Uc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1072.8" y="133.5832083958021"/>
+            <point key="canvasLocation" x="946" y="134"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7UL-Dx-btP">
@@ -71,6 +72,64 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kv4-XB-50o" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="133.59999999999999" y="133.5832083958021"/>
+        </scene>
+        <!--DetailsVC-->
+        <scene sceneID="KEG-tX-HlW">
+            <objects>
+                <tableViewController id="Re7-AT-eHU" customClass="DetailsVC" customModule="SmartBluetooth" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="50" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="acl-wy-1Xp">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DetailCell" id="Gh5-Q7-kUt" customClass="DetailCell" customModule="SmartBluetooth" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gh5-Q7-kUt" id="GHQ-td-aob">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Service" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PcA-9J-hMz">
+                                            <rect key="frame" x="10" y="0.0" width="260" height="49.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CsV-aP-9tA">
+                                            <rect key="frame" x="275" y="0.0" width="100" height="49.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="100" id="Idc-h9-xsz"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="CsV-aP-9tA" firstAttribute="leading" secondItem="PcA-9J-hMz" secondAttribute="trailing" constant="5" id="65z-k4-TE1"/>
+                                        <constraint firstAttribute="trailing" secondItem="CsV-aP-9tA" secondAttribute="trailing" id="Yzj-Jb-qxs"/>
+                                        <constraint firstItem="PcA-9J-hMz" firstAttribute="leading" secondItem="GHQ-td-aob" secondAttribute="leading" constant="10" id="Z9D-Vh-NbH"/>
+                                        <constraint firstItem="PcA-9J-hMz" firstAttribute="top" secondItem="GHQ-td-aob" secondAttribute="top" id="j9u-rn-tJm"/>
+                                        <constraint firstItem="CsV-aP-9tA" firstAttribute="top" secondItem="GHQ-td-aob" secondAttribute="top" id="oXq-3z-LAT"/>
+                                        <constraint firstAttribute="bottom" secondItem="PcA-9J-hMz" secondAttribute="bottom" id="tq1-dT-Gde"/>
+                                        <constraint firstAttribute="bottom" secondItem="CsV-aP-9tA" secondAttribute="bottom" id="uud-7d-7wW"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="service" destination="PcA-9J-hMz" id="KZl-Ch-49F"/>
+                                    <outlet property="value" destination="CsV-aP-9tA" id="03r-cn-TgI"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Re7-AT-eHU" id="r4a-jW-0lW"/>
+                            <outlet property="delegate" destination="Re7-AT-eHU" id="gk4-DL-IfR"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vbl-Oc-5iD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1744.8" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>

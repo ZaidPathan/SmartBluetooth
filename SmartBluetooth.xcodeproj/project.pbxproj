@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05706E182180505300FC7101 /* DetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05706E172180505300FC7101 /* DetailsVC.swift */; };
+		05706E1A2180518A00FC7101 /* DetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05706E192180518A00FC7101 /* DetailCell.swift */; };
+		05706E1C2180825600FC7101 /* AppConsts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05706E1B2180825600FC7101 /* AppConsts.swift */; };
 		15686DFB2175C94A00C1DE82 /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15686DFA2175C94A00C1DE82 /* BLEManager.swift */; };
 		15686DFD21760CF300C1DE82 /* ThemeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15686DFC21760CF300C1DE82 /* ThemeButton.swift */; };
 		159F17A2217476B600898074 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159F17A1217476B600898074 /* AppDelegate.swift */; };
@@ -20,6 +23,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05706E172180505300FC7101 /* DetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsVC.swift; sourceTree = "<group>"; };
+		05706E192180518A00FC7101 /* DetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCell.swift; sourceTree = "<group>"; };
+		05706E1B2180825600FC7101 /* AppConsts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConsts.swift; sourceTree = "<group>"; };
 		15686DFA2175C94A00C1DE82 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		15686DFC21760CF300C1DE82 /* ThemeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeButton.swift; sourceTree = "<group>"; };
 		159F179E217476B600898074 /* SmartBluetooth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartBluetooth.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +81,9 @@
 				159F17AA217476B800898074 /* LaunchScreen.storyboard */,
 				159F17AD217476B800898074 /* Info.plist */,
 				15686DFA2175C94A00C1DE82 /* BLEManager.swift */,
+				05706E172180505300FC7101 /* DetailsVC.swift */,
+				05706E192180518A00FC7101 /* DetailCell.swift */,
+				05706E1B2180825600FC7101 /* AppConsts.swift */,
 			);
 			path = SmartBluetooth;
 			sourceTree = "<group>";
@@ -160,7 +169,10 @@
 				15686DFB2175C94A00C1DE82 /* BLEManager.swift in Sources */,
 				159F17B62174975300898074 /* DataVC.swift in Sources */,
 				159F17BB2174A9DD00898074 /* ConnectCell.swift in Sources */,
+				05706E182180505300FC7101 /* DetailsVC.swift in Sources */,
+				05706E1C2180825600FC7101 /* AppConsts.swift in Sources */,
 				159F17B42174972500898074 /* ConnectVC.swift in Sources */,
+				05706E1A2180518A00FC7101 /* DetailCell.swift in Sources */,
 				15686DFD21760CF300C1DE82 /* ThemeButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,7 +322,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EX4A386PXY;
 				INFOPLIST_FILE = SmartBluetooth/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -329,7 +341,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EX4A386PXY;
 				INFOPLIST_FILE = SmartBluetooth/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
