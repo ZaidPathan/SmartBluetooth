@@ -3,7 +3,7 @@
 //  SmartBluetooth
 //
 //  Created by Zaid Pathan on 24/10/18.
-//  Copyright © 2018 TrialX. All rights reserved.
+//  Copyright © 2018 ZaidPathan. All rights reserved.
 //
 
 import UIKit
